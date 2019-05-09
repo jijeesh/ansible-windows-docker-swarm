@@ -1,0 +1,9 @@
+- include_tasks: version.yml
+
+- name: Windows version find
+  debug:
+    msg: "Windows Version: {{ windows_version }} "
+
+- name: Docker Swarm Primary Manager Name
+  debug:
+    msg: "Docker Swarm Primary Manager Name: {{docker_swarm_primary_manager_name}}"

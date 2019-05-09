@@ -1,0 +1,34 @@
+- name: Windows version
+  debug:
+    msg: "Windows Version: {{ windows_version }}"
+
+- name: Create directory {{ target_path }}, if not there
+  win_file: path={{target_path}} state=directory
+- name: Create directory {{ target_path }}, if not there
+  win_file: path={{src_registry_path}} state=directory
+- name: Dockerfile Template copy to the directory {{target_path}}
+  win_template:
+    src: "templates/Dockerfile.j2"
+    dest: "{{target_path}}\\Dockerfile"
+
+- name: Copy docker compose templates
+  win_template:
+    src: "templates/docker-compose.yml.j2"
+    dest: "{{target_path}}\\docker-compose.yml"
+- name: Copy config files
+  win_copy: src="files/config.yml" dest="{{target_path}}\\config.yml"
+
+
+- name: Build the Image
+  win_shell: docker-compose build
+  args:
+    chdir: "{{target_path}}"
+
+- name: down the container
+  win_shell: docker-compose down
+  args:
+    chdir: "{{target_path}}"
+- name: Run the Image
+  win_shell: docker-compose up -d
+  args:
+    chdir: "{{target_path}}"

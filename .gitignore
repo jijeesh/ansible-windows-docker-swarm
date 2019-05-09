@@ -1,0 +1,10 @@
+packer_cache/*
+data/*
+*.box
+iso/*
+.vagrant/*
+output-*/*
+
+*.pyc
+
+*.retry

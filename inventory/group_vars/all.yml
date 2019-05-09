@@ -1,0 +1,2 @@
+docker_swarm_primary_manager_name: >-
+  {{ groups['docker_swarm_manager'] | first }}

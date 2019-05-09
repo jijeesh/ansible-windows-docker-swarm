@@ -1,0 +1,8 @@
+app_name: registry
+app_port: 5000
+app_host_port: 5000
+base_path: "C:\\docker"
+target_path: "{{base_path}}\\{{app_name}}"
+src_registry_path: "C:\\registry"
+dest_registry_path: "C:\\registry"
+registry_hostname: '172.16.61.62:5000'

@@ -1,0 +1,53 @@
+---
+- hosts: localhost
+  gather_facts: false
+  become: no
+  tasks:
+    - name: "Check ansible version !=2.7.0"
+      assert:
+        msg: "Ansible V2.7.0 can't be used until: https://github.com/ansible/ansible/issues/46600 is fixed"
+        that:
+          - ansible_version.string is version("2.7.0", "!=")
+          - ansible_version.string is version("2.6.0", ">=")
+      tags:
+        - check
+  vars:
+    ansible_connection: local
+
+- name: Check Gather Facts
+  hosts: docker_swarm_manager:docker_swarm_worker
+  environment: "{{ env_vars|default({}) }}"
+  gather_facts: no
+  tasks:
+    - import_role:
+        name: windows/gather-facts
+      tags:
+        - gather_facts
+- name: Install common
+  hosts: docker_swarm_manager:docker_swarm_worker
+  environment: "{{ env_vars|default({}) }}"
+  gather_facts: no
+  tasks:
+    - import_role:
+        name: windows/gather-facts
+      tags:
+        - gather_facts
+    - import_role:
+        name: windows/common
+      tags:
+        - common
+        - gather_facts
+- name: Install Docker on windows nodes
+  hosts: docker_swarm_manager:docker_swarm_worker
+  environment: "{{ env_vars|default({}) }}"
+  gather_facts: no
+  tasks:
+    - import_role:
+        name: windows/gather-facts
+      tags:
+        - gather_facts
+    - import_role:
+        name: windows/docker
+      tags:
+        - docker
+        - gather_facts

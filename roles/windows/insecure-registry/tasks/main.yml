@@ -1,0 +1,15 @@
+- name: Windows version
+  debug:
+    msg: "Windows Version: {{ windows_version }}"
+
+- name: Create insecure registy
+  win_template:
+    src: "templates/daemon.json.j2"
+    dest: "C:\\ProgramData\\docker\\config\\daemon.json"
+
+
+
+- name: Retart Docker as Windows Service
+  win_service:
+    name: docker
+    state: restarted

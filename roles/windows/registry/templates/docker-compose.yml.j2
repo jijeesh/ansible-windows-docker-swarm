@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  {{app_name}}:
+    #build: .
+    image: 'stefanscherer/registry-windows:2.6.2'
+    ports:
+      - "{{app_host_port}}:{{app_port}}"
+    restart: always
+    volumes:
+      - {{src_registry_path}}:{{dest_registry_path}}
