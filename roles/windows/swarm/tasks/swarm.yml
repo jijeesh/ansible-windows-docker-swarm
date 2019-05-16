@@ -1,0 +1,74 @@
+- name: cluster | Get swarm state
+  win_shell: docker info --format "{{format_string}}"
+  changed_when: false
+  register: docker_swarm_state
+
+- name: Docker swarm state
+  debug:
+    msg: "State: {{ docker_swarm_state.stdout }} "
+
+- name: cluster | Set swarm state facts
+  set_fact:
+    docker_node_active: "{{ docker_swarm_state.stdout == 'active' }}"
+    docker_node_pending: "{{ docker_swarm_state.stdout == 'pending' }}"
+    docker_swarm_addr: "{{docker_swarm_primary_manager_ip}}"
+
+- name: cluster | Init "Swarm Mode" on the first manager
+  win_shell: >
+    docker swarm init
+    --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+    --advertise-addr {{ docker_swarm_addr }}
+  when:
+    - not docker_node_active
+    - not docker_node_pending
+    - inventory_hostname == docker_swarm_primary_manager_name
+
+- name: cluster | Get worker join-token
+  win_shell: docker swarm join-token -q worker
+  register: docker_swarm_worker_token
+  delegate_to: "{{ docker_swarm_primary_manager_name }}"
+  delegate_facts: true
+  when:
+    - "'docker_swarm_worker' in group_names"
+    - not docker_node_active
+    - not docker_node_pending
+
+- name: cluster | Get manager join-token
+  win_shell: docker swarm join-token -q manager
+  register: docker_swarm_manager_token
+  delegate_to: "{{ docker_swarm_primary_manager_name }}"
+  delegate_facts: true
+  when:
+    - "'docker_swarm_manager' in group_names"
+    - inventory_hostname != docker_swarm_primary_manager_name
+    - not docker_node_active
+    - not docker_node_pending
+
+- name: cluster | Register primary node
+  set_fact:
+    docker_primary_node_addr: "{{docker_swarm_primary_manager_ip}}"
+
+- name: cluster | Join Swarm as a worker
+  win_shell: >
+    docker swarm join
+    --advertise-addr {{ docker_swarm_addr }}
+    --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+    --token {{ docker_swarm_worker_token.stdout }}
+    {{ docker_primary_node_addr }}:{{ docker_swarm_port }}
+  when:
+    - not docker_node_active
+    - not docker_node_pending
+    - "'docker_swarm_worker' in group_names"
+
+- name: cluster | Join Swarm as a manager
+  win_shell: >
+    docker swarm join
+    --advertise-addr {{ docker_swarm_addr }}
+    --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
+    --token {{ docker_swarm_manager_token.stdout }}
+    {{ docker_primary_node_addr }}:{{ docker_swarm_port }}
+  when:
+    - not docker_node_active
+    - not docker_node_pending
+    - "'docker_swarm_manager' in group_names"
+    - inventory_hostname != docker_swarm_primary_manager_name

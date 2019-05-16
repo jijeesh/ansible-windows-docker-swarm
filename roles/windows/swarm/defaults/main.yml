@@ -1,0 +1,2 @@
+format_string: !unsafe "{{.Swarm.LocalNodeState}}"
+docker_swarm_port: 2377

@@ -7,3 +7,14 @@
 - name: Docker Swarm Primary Manager Name
   debug:
     msg: "Docker Swarm Primary Manager Name: {{docker_swarm_primary_manager_name}}"
+
+- name: Docker Swarm Primary Manager IP
+  debug:
+    msg: "Docker Swarm Primary Manager IP: {{docker_swarm_primary_manager_ip}}"
+
+# - name: IP
+#   debug: var=groups[inventory_hostname]['{{docker_swarm_primary_manager_name}}']['ipv4']['address']
+# # - debug: var=inventory_hostname
+# - debug: var=ansible_host
+# - debug: var=hostvars['{{docker_swarm_primary_manager_name}}'].ansible_host
+# - debug: var=hostvars

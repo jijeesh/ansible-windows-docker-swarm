@@ -1,2 +1,6 @@
 docker_swarm_primary_manager_name: >-
   {{ groups['docker_swarm_manager'] | first }}
+registry_hostname: "172.16.61.62:5000"
+docker_swarm_primary_manager_ip: "{{hostvars[lookup('vars','docker_swarm_primary_manager_name')].ansible_host}}"
+# docker_swarm_primary_manager_ip: "{{hostvars['windows01'].ansible_host}}"
+# docker_swarm_primary_manager_ip: "{{}}"
