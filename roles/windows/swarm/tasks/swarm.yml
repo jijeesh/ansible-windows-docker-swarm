@@ -51,9 +51,7 @@
 - name: cluster | Join Swarm as a worker
   win_shell: >
     docker swarm join
-    --advertise-addr {{ docker_swarm_addr }}
-    --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
-    --token {{ docker_swarm_worker_token.stdout }}
+    --token {{ docker_swarm_worker_token.stdout  | trim }}
     {{ docker_primary_node_addr }}:{{ docker_swarm_port }}
   when:
     - not docker_node_active
@@ -65,7 +63,7 @@
     docker swarm join
     --advertise-addr {{ docker_swarm_addr }}
     --listen-addr {{ docker_swarm_addr }}:{{ docker_swarm_port }}
-    --token {{ docker_swarm_manager_token.stdout }}
+    --token {{ docker_swarm_manager_token.stdout  | trim}}
     {{ docker_primary_node_addr }}:{{ docker_swarm_port }}
   when:
     - not docker_node_active
