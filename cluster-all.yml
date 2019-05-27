@@ -79,7 +79,7 @@
       tags:
         - registry
         - gather_facts
-- name: Check Gather Facts
+- name: Swarm init
   hosts: docker_swarm_manager:docker_swarm_worker
   environment: "{{ env_vars|default({}) }}"
   gather_facts: no

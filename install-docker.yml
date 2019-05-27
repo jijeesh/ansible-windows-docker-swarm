@@ -1,5 +1,4 @@
-
-- name: Swarm init
+- name: Install Docker on windows nodes
   hosts: docker_swarm_manager:docker_swarm_worker
   environment: "{{ env_vars|default({}) }}"
   gather_facts: no
@@ -9,6 +8,7 @@
       tags:
         - gather_facts
     - import_role:
-        name: windows/swarm
+        name: windows/docker
       tags:
-        - swarm-init
+        - docker
+        - gather_facts

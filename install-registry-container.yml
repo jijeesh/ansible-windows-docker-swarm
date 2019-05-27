@@ -1,6 +1,5 @@
-
-- name: Swarm init
-  hosts: docker_swarm_manager:docker_swarm_worker
+- name: Install  registry Container
+  hosts: docker_swarm_manager
   environment: "{{ env_vars|default({}) }}"
   gather_facts: no
   tasks:
@@ -9,6 +8,7 @@
       tags:
         - gather_facts
     - import_role:
-        name: windows/swarm
+        name: windows/registry
       tags:
-        - swarm-init
+        - registry
+        - gather_facts
